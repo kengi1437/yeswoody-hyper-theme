@@ -1,0 +1,72 @@
+{%- liquid
+  if use_variant
+    assign target = product.selected_or_first_available_variant
+  else
+    assign target = product
+  endif
+
+  assign compare_at_price = target.compare_at_price
+  assign price = target.price | default: 1999
+  assign money_price = price | money
+  assign money_price_min = product.price_min | money
+  assign money_price_max = product.price_max | money
+
+  if settings.currency_code_enabled
+    assign money_price = price | money_with_currency
+    assign money_price_min = product.price_min | money_with_currency
+    assign money_price_max = product.price_max | money_with_currency
+  endif
+-%}
+
+<div class="price {{ price_class }} flex flex-wrap items-center gap-2">
+  {%- if product.price_varies -%}
+    <span class="price__regular">
+      {{- 'products.product.from_price_html' | t: price: money_price_min -}}
+    </span>
+  {%- else -%}
+    {%- if compare_at_price > price -%}
+      <span class="price__sale color-product-price-sale">
+        {{- money_price -}}
+      </span>
+      <span class="price__compare text-subtext line-through">
+        <s>{{ compare_at_price | money }}</s>
+      </span>
+      {%- if settings.show_sale_badge -%}
+        <span class="f-badge f-badge--sale font-body-bold text-sm">
+          {{- compare_at_price | minus: price | times: 100.0 | divided_by: compare_at_price | round | append: '%' | prepend: '-' -}}
+        </span>
+      {%- endif -%}
+    {%- else -%}
+      <span class="price__regular">
+        {{- money_price -}}
+      </span>
+    {%- endif -%}
+  {%- endif -%}
+
+  {%- if target.available == false -%}
+    <span class="price__sold-out text-subtext font-body-bold">
+      {{- 'products.product.sold_out' | t -}}
+    </span>
+  {%- endif -%}
+
+  {%- if target.unit_price_measurement -%}
+    <span class="price__unit text-subtext text-sm">
+      {%- capture unit_price_separator -%}
+        <span aria-hidden="true">/</span>
+        <span class="visually-hidden">{{ 'accessibility.unit_price_separator' | t }}&nbsp;</span>
+      {%- endcapture -%}
+      {%- capture unit_price_base_unit -%}
+        <span>
+          {%- if target.unit_price_measurement.reference_value != 1 -%}
+            {{- target.unit_price_measurement.reference_value -}}
+          {%- endif -%}
+          {{ target.unit_price_measurement.reference_unit }}
+        </span>
+      {%- endcapture -%}
+      <span class="visually-hidden">{{ 'products.product.unit_price_label' | t }}</span>
+      <span>{{ target.unit_price | money }}</span>
+      {{- unit_price_separator -}}
+      {{- unit_price_base_unit -}}
+    </span>
+  {%- endif -%}
+</div>

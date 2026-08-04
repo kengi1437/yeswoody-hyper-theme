@@ -1,0 +1,42 @@
+{%- liquid
+  assign image = card_collection.featured_image | default: card_collection.image
+  assign collection_title = card_collection.title | escape
+-%}
+
+<div class="collection-card color-scheme-{{ settings.collection_card_color_scheme | default: '1' }}">
+  <div class="collection-card__wrapper h-full">
+    <a href="{{ card_collection.url }}" class="collection-card__image-wrapper block relative" aria-label="{{ collection_title }}">
+      {%- if image != blank -%}
+        <div class="media-wrapper collection-card__image" style="--aspect-ratio: {{ image.aspect_ratio | default: 1 }}">
+          {{ image | image_url: width: 800 | image_tag:
+            loading: 'lazy',
+            widths: '165, 355, 535, 710, 800',
+            class: 'motion-reduce'
+          }}
+        </div>
+      {%- else -%}
+        <div class="media-wrapper collection-card__image placeholder">
+          {{ 'collection-1' | placeholder_svg_tag: 'placeholder-svg' }}
+        </div>
+      {%- endif -%}
+    </a>
+
+    <div class="collection-card__info text-center">
+      <h3 class="collection-card__title h4">
+        <a href="{{ card_collection.url }}" class="reversed-link">
+          <span class="reversed-link__text">{{ collection_title }}</span>
+        </a>
+      </h3>
+      {%- if card_collection.description != blank and settings.show_collection_description -%}
+        <p class="collection-card__description text-subtext">
+          {{ card_collection.description | strip_html | truncatewords: 15 }}
+        </p>
+      {%- endif -%}
+      {%- if settings.show_collection_product_count -%}
+        <p class="collection-card__count text-subtext">
+          {{ 'collections.general.items_with_count' | t: count: card_collection.all_products_count }}
+        </p>
+      {%- endif -%}
+    </div>
+  </div>
+</div>
