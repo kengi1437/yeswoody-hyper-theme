@@ -1,0 +1,268 @@
+<script src="{{ 'footer.js' | asset_url }}" defer="defer"></script>
+
+<style>
+  .section-{{ section.id }} {
+    --section-padding-top: {{ section.settings.padding_top }}px;
+    --section-padding-bottom: {{ section.settings.padding_bottom }}px;
+  }
+</style>
+
+<footer class="footer color-scheme-{{ section.settings.color_scheme }} section-{{ section.id }}">
+  <div class="section-divider page-width">
+    <div class="border-top no-empty"></div>
+  </div>
+  <div class="footer__wrapper section--padding">
+    <div class="footer__top page-width page-width--fixed" style="--total-items: {{ section.blocks.size | plus: 1 }};">
+      <div class="footer__top-wrapper flex flex-wrap">
+        {%- if section.settings.show_newsletter -%}
+          <div class="footer-block footer-block--newsletter f-column w-full lg:order-none order-first" style="--col-width:0.55;--form-width: 465px;">
+            <div class="footer-newsletter text-left">
+              <h3 class="footer-block__heading inline-richtext h3">{{ section.settings.newsletter_heading }}</h3>
+              <div class="footer-newsletter__description rte text-subtext">
+                {{ section.settings.newsletter_text }}
+              </div>
+              <div class="footer-newsletter__form">
+                <div class="newsletter-form">
+                  {%- form 'customer', id: 'ContactSubscribe-' | append: section.id, class: 'contact-form' -%}
+                    <input type="hidden" name="contact[tags]" value="newsletter">
+                    <div class="newsletter-form__field-wrapper">
+                      <div class="form-field relative">
+                        <label class="form-label visually-hidden" for="NewsletterForm-{{ section.id }}">
+                          {{ 'newsletter.label' | t }}
+                        </label>
+                        <input
+                          id="NewsletterForm-{{ section.id }}"
+                          type="email"
+                          name="contact[email]"
+                          class="form-control flex-1"
+                          value="{{ form.email }}"
+                          aria-required="true"
+                          autocorrect="off"
+                          autocapitalize="off"
+                          autocomplete="email"
+                          placeholder="{{ 'newsletter.placeholder' | t }}"
+                          required
+                        >
+                        <button class="btn btn--primary" type="submit" name="commit" id="Newsletter-submit--{{ section.id }}">
+                          <span class="btn__text">{{ 'newsletter.button_label' | t }}</span>
+                        </button>
+                      </div>
+                    </div>
+                    {%- if form.posted_successfully? -%}
+                      <div class="form-message alert alert--success blocks-radius w-full">
+                        {{ 'newsletter.success' | t }}
+                      </div>
+                    {%- endif -%}
+                  {%- endform -%}
+                </div>
+              </div>
+              {%- if section.settings.newsletter_terms != blank -%}
+                <div class="footer-newsletter__term rte text-subtext">
+                  {{ section.settings.newsletter_terms }}
+                </div>
+              {%- endif -%}
+            </div>
+          </div>
+        {%- endif -%}
+
+        {%- for block in section.blocks -%}
+          <div class="footer-block footer-block--menu f-column w-full" style="--col-width:0.15;" {{ block.shopify_attributes }}>
+            <details
+              id="Details-{{ block.id }}-{{ section.id }}"
+              is="footer-details"
+              open
+              data-open-default="false"
+              class="accordion-details footer-accordion-details"
+            >
+              <summary class="accordion-details__summary flex items-center justify-between gap-2">
+                <h3 class="footer-block__heading inline-richtext h6">{{ block.settings.heading }}</h3>
+                <span class="flex items-center lg:hidden">
+                  {%- render 'icon-plus-toggle' -%}
+                </span>
+              </summary>
+              <ul class="accordion-details__content linklist linklist--vertical list-unstyled">
+                {%- for link in block.settings.menu.links -%}
+                  <li class="reversed-link">
+                    <a href="{{ link.url }}" class="text-subtext block">
+                      <span class="reversed-link__text">{{ link.title }}</span>
+                    </a>
+                  </li>
+                {%- endfor -%}
+              </ul>
+            </details>
+          </div>
+        {%- endfor -%}
+      </div>
+    </div>
+
+    <div class="footer__bottom page-width page-width--fixed">
+      <div class="footer__bottom-row flex justify-between items-end">
+        <div class="grid gap-5">
+          {%- if section.settings.show_country_selector -%}
+            <div class="footer__localization relative z-2 flex items-center">
+              {%- render 'localization-form' -%}
+            </div>
+          {%- endif -%}
+          
+          {%- if section.settings.show_payment_icons -%}
+            <div class="footer__payment">
+              <span class="visually-hidden">{{ 'sections.footer.payment' | t }}</span>
+              <ul class="list list-payment" role="list">
+                {%- for type in shop.enabled_payment_types -%}
+                  <li class="list-payment__item">
+                    {{ type | payment_type_svg_tag }}
+                  </li>
+                {%- endfor -%}
+              </ul>
+            </div>
+          {%- endif -%}
+        </div>
+
+        {%- if section.settings.show_social -%}
+          <ul class="list-unstyled flex flex-wrap gap-x-3 gap-y-2 items-center socials--bordered footer__list-social" role="list">
+            {%- render 'social-icons' -%}
+          </ul>
+        {%- endif -%}
+      </div>
+
+      <div class="footer__bottom-row flex justify-between items-start">
+        <div class="footer__copyright">
+          <p class="footer__copyright-content">
+            &copy; {{ 'now' | date: '%Y' }}
+            <a class="link-underline" href="{{ routes.root_url }}">{{ shop.name }}</a>.
+            {{ powered_by_link }}
+          </p>
+        </div>
+        <div class="footer__info flex items-center">
+          {%- if section.settings.show_policies -%}
+            <ul class="linklist linklist--horizontal list-unstyled">
+              {%- for policy in shop.policies -%}
+                {%- unless policy.title == 'Refund policy' -%}
+                  <li>
+                    <a href="{{ policy.url }}" class="reversed-link">{{ policy.title }}</a>
+                  </li>
+                {%- endunless -%}
+              {%- endfor -%}
+            </ul>
+          {%- endif -%}
+        </div>
+      </div>
+    </div>
+  </div>
+</footer>
+
+{% schema %}
+{
+  "name": "Footer",
+  "settings": [
+    {
+      "type": "select",
+      "id": "color_scheme",
+      "label": "Color scheme",
+      "options": [
+        {"value": "1", "label": "Scheme 1"},
+        {"value": "2", "label": "Scheme 2"},
+        {"value": "inverse", "label": "Inverse"}
+      ],
+      "default": "1"
+    },
+    {
+      "type": "header",
+      "content": "Newsletter"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_newsletter",
+      "label": "Show newsletter signup",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "newsletter_heading",
+      "label": "Newsletter heading",
+      "default": "Join Our Newsletter"
+    },
+    {
+      "type": "richtext",
+      "id": "newsletter_text",
+      "label": "Newsletter description",
+      "default": "<p>Sign up to our newsletter & receive 10% off your first order.</p>"
+    },
+    {
+      "type": "richtext",
+      "id": "newsletter_terms",
+      "label": "Newsletter terms",
+      "default": "<p>By subscribing you agree to the <a href='/policies/terms-of-service'>Terms of Services</a> and <a href='/policies/privacy-policy'>Privacy Policy.</a></p>"
+    },
+    {
+      "type": "header",
+      "content": "Footer Bottom"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_country_selector",
+      "label": "Show country/region selector",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_payment_icons",
+      "label": "Show payment icons",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_social",
+      "label": "Show social icons",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_policies",
+      "label": "Show policy links",
+      "default": true
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "label": "Padding top",
+      "min": 0, "max": 100, "step": 4, "default": 40, "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "label": "Padding bottom",
+      "min": 0, "max": 100, "step": 4, "default": 40, "unit": "px"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "menu",
+      "name": "Menu",
+      "settings": [
+        {
+          "type": "text",
+          "id": "heading",
+          "label": "Heading",
+          "default": "Menu"
+        },
+        {
+          "type": "link_list",
+          "id": "menu",
+          "label": "Menu"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Footer",
+      "blocks": [
+        {"type": "menu", "settings": {"heading": "Company"}},
+        {"type": "menu", "settings": {"heading": "Collection"}},
+        {"type": "menu", "settings": {"heading": "Shop"}}
+      ]
+    }
+  ]
+}
+{% endschema %}

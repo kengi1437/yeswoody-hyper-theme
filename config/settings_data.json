@@ -1,0 +1,32 @@
+{
+  "current": {
+    "color_primary": "#C4301C",
+    "color_background": "#FFFFFF",
+    "color_foreground": "#000000",
+    "color_text_heading": "#000000",
+    "color_subtext": "#666666",
+    "color_border": "#E5E5E5",
+    "color_button": "#000000",
+    "color_button_text": "#FFFFFF",
+    "color_secondary_button": "#EDEDED",
+    "color_secondary_button_text": "#000000",
+    "color_field": "#EDEDED",
+    "color_field_text": "#000000",
+    "color_product_price_sale": "#C4301C",
+    "color_progress_bar": "#0D8756",
+    "color_link": "#000000",
+    "color_link_hover": "#000000",
+    "type_header_font": "instrument_sans_n7",
+    "type_body_font": "instrument_sans_n5",
+    "page_width": 1440,
+    "logo_width": 120,
+    "social_facebook_link": "https://facebook.com/shopify",
+    "social_twitter_link": "https://x.com/shopify",
+    "social_instagram_link": "https://instagram.com/shopify",
+    "social_tiktok_link": "https://tiktok.com/@shopify",
+    "social_youtube_link": "https://youtube.com/shopify",
+    "favicon": "shopify:\\/\\/shop_images\\/favicon.jpg",
+    "show_currency_selector": true,
+    "cart_type": "drawer"
+  }
+}
