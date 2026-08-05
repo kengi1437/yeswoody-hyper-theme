@@ -9,7 +9,12 @@
   class="section section--{{ section.settings.section_width }}{% if section.settings.background_color != blank %} color-custom-{{ section.id }}{% endif %} section-collection-slider spacing-style gap-style"
   style="{% render 'spacing-style', settings: section.settings %}{% render 'gap-style', value: section.settings.gap %}"
 >
-  {% content_for 'block', type: 'group', id: 'static-header' %}
+  {% if section.settings.heading != blank %}
+    <div class="section-header">
+      <h2>{{ section.settings.heading }}</h2>
+    </div>
+  {% endif %}
+
   {% content_for 'block', type: 'coll-slider', id: 'static-slider-content' %}
 </div>
 
@@ -33,7 +38,6 @@
     {"type": "range", "id": "padding-block-end", "label": "Bottom padding", "min": 0, "max": 200, "step": 4, "unit": "px", "default": 48}
   ],
   "blocks": [
-    {"type": "group", "name": "Header"},
     {"type": "coll-slider", "name": "Collection slider"}
   ],
   "presets": [{"name": "Collection Slider", "category": "Collection"}]
