@@ -1,0 +1,288 @@
+{% liquid
+  assign heading = block.settings.heading
+  assign text = block.settings.text
+  assign button_label = block.settings.button_label
+  assign button_link = block.settings.button_link
+  assign show_countdown = block.settings.show_countdown
+  assign end_date = block.settings.end_date
+  assign end_time = block.settings.end_time
+  
+  if block.settings.custom_bg_color != blank
+    assign bg_color = block.settings.custom_bg_color
+  else
+    assign bg_color = 'var(--color-primary, #c4301c)'
+  endif
+  
+  if block.settings.custom_text_color != blank
+    assign text_color = block.settings.custom_text_color
+  else
+    assign text_color = '#ffffff'
+  endif
+%}
+
+<div 
+  class="promotion-banner" 
+  {{ block.shopify_attributes }}
+  style="background-color: {{ bg_color }}; color: {{ text_color }};"
+>
+  <div class="promotion-banner__content">
+    {% if heading != blank %}
+      <h2 class="promotion-banner__heading">{{ heading }}</h2>
+    {% endif %}
+    
+    {% if text != blank %}
+      <div class="promotion-banner__text">{{ text }}</div>
+    {% endif %}
+    
+    {% if show_countdown and end_date != blank %}
+      <div 
+        class="promotion-banner__countdown" 
+        data-countdown
+        data-end-date="{{ end_date }}"
+        data-end-time="{{ end_time }}"
+      >
+        <div class="countdown__timer">
+          <div class="countdown__item">
+            <span class="countdown__number" data-days>00</span>
+            <span class="countdown__label">Days</span>
+          </div>
+          <div class="countdown__separator">:</div>
+          <div class="countdown__item">
+            <span class="countdown__number" data-hours>00</span>
+            <span class="countdown__label">Hours</span>
+          </div>
+          <div class="countdown__separator">:</div>
+          <div class="countdown__item">
+            <span class="countdown__number" data-minutes>00</span>
+            <span class="countdown__label">Minutes</span>
+          </div>
+          <div class="countdown__separator">:</div>
+          <div class="countdown__item">
+            <span class="countdown__number" data-seconds>00</span>
+            <span class="countdown__label">Seconds</span>
+          </div>
+        </div>
+      </div>
+    {% endif %}
+    
+    {% if button_label != blank and button_link != blank %}
+      <div class="promotion-banner__button">
+        <a href="{{ button_link }}" class="button button--promo">
+          {{ button_label }}
+        </a>
+      </div>
+    {% endif %}
+  </div>
+</div>
+
+<script>
+  class CountdownTimer {
+    constructor(element) {
+      this.element = element;
+      this.endDate = element.dataset.endDate;
+      this.endTime = element.dataset.endTime || '23:59:59';
+      this.init();
+    }
+
+    init() {
+      if (!this.endDate) return;
+      
+      this.targetDate = new Date(`${this.endDate}T${this.endTime}`).getTime();
+      this.elements = {
+        days: this.element.querySelector('[data-days]'),
+        hours: this.element.querySelector('[data-hours]'),
+        minutes: this.element.querySelector('[data-minutes]'),
+        seconds: this.element.querySelector('[data-seconds]')
+      };
+      
+      this.update();
+      this.interval = setInterval(() => this.update(), 1000);
+    }
+
+    update() {
+      const now = new Date().getTime();
+      const distance = this.targetDate - now;
+
+      if (distance < 0) {
+        clearInterval(this.interval);
+        this.element.innerHTML = '<p class="countdown__expired">Promotion ended</p>';
+        return;
+      }
+
+      const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+      const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+      const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+      const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+      if (this.elements.days) this.elements.days.textContent = String(days).padStart(2, '0');
+      if (this.elements.hours) this.elements.hours.textContent = String(hours).padStart(2, '0');
+      if (this.elements.minutes) this.elements.minutes.textContent = String(minutes).padStart(2, '0');
+      if (this.elements.seconds) this.elements.seconds.textContent = String(seconds).padStart(2, '0');
+    }
+  }
+
+  // Initialize countdown timers
+  document.addEventListener('DOMContentLoaded', () => {
+    document.querySelectorAll('[data-countdown]').forEach(el => {
+      new CountdownTimer(el);
+    });
+  });
+
+  // Shopify theme editor support
+  if (Shopify && Shopify.designMode) {
+    document.addEventListener('shopify:section:load', (event) => {
+      event.target.querySelectorAll('[data-countdown]').forEach(el => {
+        new CountdownTimer(el);
+      });
+    });
+  }
+</script>
+
+{% stylesheet %}
+  .promotion-banner {
+    padding: 48px 24px;
+    text-align: center;
+    border-radius: var(--blocks-radius, 8px);
+  }
+
+  .promotion-banner__content {
+    max-width: 900px;
+    margin: 0 auto;
+  }
+
+  .promotion-banner__heading {
+    font-size: 2rem;
+    font-weight: 700;
+    margin: 0 0 16px;
+  }
+
+  .promotion-banner__text {
+    font-size: 1.1rem;
+    margin: 0 0 24px;
+  }
+
+  .promotion-banner__countdown {
+    margin: 32px 0;
+  }
+
+  .countdown__timer {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+
+  .countdown__item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-width: 70px;
+  }
+
+  .countdown__number {
+    font-size: 2.5rem;
+    font-weight: 700;
+    line-height: 1;
+  }
+
+  .countdown__label {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    margin-top: 8px;
+    opacity: 0.9;
+  }
+
+  .countdown__separator {
+    font-size: 2rem;
+    font-weight: 700;
+    opacity: 0.6;
+  }
+
+  .countdown__expired {
+    font-size: 1.2rem;
+    font-weight: 600;
+    margin: 0;
+  }
+
+  .promotion-banner__button {
+    margin-top: 24px;
+  }
+
+  .button--promo {
+    padding: 14px 32px;
+    font-size: 1.1rem;
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Promotion Banner Content",
+  "settings": [
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Limited Time Offer"
+    },
+    {
+      "type": "richtext",
+      "id": "text",
+      "label": "Description",
+      "default": "<p>Don't miss out on this exclusive deal!</p>"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_countdown",
+      "label": "Show countdown timer",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "end_date",
+      "label": "End date",
+      "info": "Format: YYYY-MM-DD (e.g., 2026-12-31)",
+      "default": "2026-12-31"
+    },
+    {
+      "type": "text",
+      "id": "end_time",
+      "label": "End time",
+      "info": "Format: HH:MM:SS (24-hour, e.g., 23:59:59)",
+      "default": "23:59:59"
+    },
+    {
+      "type": "text",
+      "id": "button_label",
+      "label": "Button label",
+      "default": "Shop Now"
+    },
+    {
+      "type": "url",
+      "id": "button_link",
+      "label": "Button link"
+    },
+    {
+      "type": "header",
+      "content": "Colors"
+    },
+    {
+      "type": "color",
+      "id": "custom_bg_color",
+      "label": "Background color",
+      "default": "#C4301C"
+    },
+    {
+      "type": "color",
+      "id": "custom_text_color",
+      "label": "Text color",
+      "default": "#FFFFFF"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Promotion Banner Content"
+    }
+  ]
+}
+{% endschema %}
