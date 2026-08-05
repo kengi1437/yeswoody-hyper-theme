@@ -28,7 +28,24 @@
     </div>
   {% endif %}
 
-  {% content_for 'block', type: 'coll-tabs', id: 'static-tabs-content' %}
+  <div class="collection-tabs-content">
+    {% for block in section.blocks %}
+      {% assign collection = block.settings.collection %}
+      <div class="collection-tab-content" data-tab="{{ forloop.index }}">
+        <div class="collection-grid">
+          {% for product in collection.products limit: block.settings.products_to_show %}
+            <div class="product-card">
+              <a href="{{ product.url }}">
+                <img src="{{ product.featured_image | image_url: width: 300 }}" alt="{{ product.title }}">
+                <h4>{{ product.title }}</h4>
+                <p>{{ product.price | money }}</p>
+              </a>
+            </div>
+          {% endfor %}
+        </div>
+      </div>
+    {% endfor %}
+  </div>
 </div>
 
 {% schema %}
@@ -167,11 +184,16 @@
   ],
   "blocks": [
     {
-      "type": "coll-tabs",
-      "name": "Collection Tabs",
-      "limit": 1
+      "type": "collection_tab",
+      "name": "Collection Tab",
+      "settings": [
+        {"type": "collection", "id": "collection", "label": "Collection"},
+        {"type": "text", "id": "tab_label", "label": "Tab label"},
+        {"type": "range", "id": "products_to_show", "label": "Products to show", "min": 4, "max": 24, "step": 4, "default": 8}
+      ]
     }
   ],
+  "max_blocks": 5,
   "presets": [
     {
       "name": "Collection Tabs",

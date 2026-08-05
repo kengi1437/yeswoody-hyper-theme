@@ -15,7 +15,21 @@
     </div>
   {% endif %}
 
-  {% content_for 'block', type: 'coll-slider', id: 'static-slider-content' %}
+  <div class="collection-slider-wrapper">
+    {% for block in section.blocks %}
+      <div class="collection-card">
+        {% assign collection = block.settings.collection %}
+        <a href="{{ collection.url | default: '#' }}">
+          {% if collection.image %}
+            <img src="{{ collection.image | image_url: width: 400 }}" alt="{{ collection.title }}">
+          {% else %}
+            {{ 'collection-1' | placeholder_svg_tag }}
+          {% endif %}
+          <h3>{{ collection.title | default: block.settings.title }}</h3>
+        </a>
+      </div>
+    {% endfor %}
+  </div>
 </div>
 
 {% schema %}
@@ -38,8 +52,16 @@
     {"type": "range", "id": "padding-block-end", "label": "Bottom padding", "min": 0, "max": 200, "step": 4, "unit": "px", "default": 48}
   ],
   "blocks": [
-    {"type": "coll-slider", "name": "Collection slider"}
+    {
+      "type": "collection",
+      "name": "Collection",
+      "settings": [
+        {"type": "collection", "id": "collection", "label": "Collection"},
+        {"type": "text", "id": "title", "label": "Custom title"}
+      ]
+    }
   ],
+  "max_blocks": 12,
   "presets": [{"name": "Collection Slider", "category": "Collection"}]
 }
 {% endschema %}

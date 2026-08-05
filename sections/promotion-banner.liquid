@@ -20,7 +20,13 @@
   "
   data-testid="promotion-banner-section"
 >
-  {% content_for 'block', type: 'promo-banner', id: 'static-promotion-content' %}
+  <div class="promotion-content">
+    <h2>{{ section.settings.heading }}</h2>
+    <p>{{ section.settings.text }}</p>
+    {% if section.settings.button_label != blank %}
+      <a href="{{ section.settings.button_link }}" class="button">{{ section.settings.button_label }}</a>
+    {% endif %}
+  </div>
 </div>
 
 {% schema %}
@@ -77,13 +83,7 @@
       "default": 48
     }
   ],
-  "blocks": [
-    {
-      "type": "promo-banner",
-      "name": "Promotion Banner",
-      "limit": 1
-    }
-  ],
+  "blocks": [],
   "presets": [
     {
       "name": "Promotion Banner",
