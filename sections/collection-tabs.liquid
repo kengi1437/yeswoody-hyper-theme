@@ -28,7 +28,7 @@
     </div>
   {% endif %}
 
-  {% content_for 'block', type: '_collection-tabs-content', id: 'static-tabs-content' %}
+  {% content_for 'block', type: '_coll-tabs', id: 'static-tabs-content' %}
 </div>
 
 {% schema %}
@@ -167,8 +167,8 @@
   ],
   "blocks": [
     {
-      "type": "_collection-tabs-content",
-      "name": "Collection Tabs Content",
+      "type": "_coll-tabs",
+      "name": "Collection Tabs",
       "limit": 1
     }
   ],

@@ -20,7 +20,7 @@
   "
   data-testid="promotion-banner-section"
 >
-  {% content_for 'block', type: '_promotion-banner-content', id: 'static-promotion-content' %}
+  {% content_for 'block', type: '_promo-banner', id: 'static-promotion-content' %}
 </div>
 
 {% schema %}
@@ -79,8 +79,8 @@
   ],
   "blocks": [
     {
-      "type": "_promotion-banner-content",
-      "name": "Promotion Banner Content",
+      "type": "_promo-banner",
+      "name": "Promotion Banner",
       "limit": 1
     }
   ],
